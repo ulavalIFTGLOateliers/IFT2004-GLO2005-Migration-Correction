@@ -176,7 +176,7 @@ class Grader:
         Lance la BD de l'étudiant, puis effectue un ping.
         :return: True si la connexion fonctionne, False sinon
         """
-        self.database = Database()
+        self.database = Database(env_path=".grading.env")
         self.cursor = self.database.get_cursor()
         self.database.get_connection().ping(reconnect=False)
         self.database.up()
