@@ -8,6 +8,7 @@ def failable(func):
             return func(*args, **kwargs)
         except Exception as e:
             print(e)
+            print(func)
             return False
 
     return wrapper
