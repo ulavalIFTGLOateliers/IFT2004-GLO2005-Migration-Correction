@@ -176,7 +176,7 @@ class Grader:
         Lance la BD de l'étudiant, puis effectue un ping.
         :return: True si la connexion fonctionne, False sinon
         """
-        self.database = Database(env_path=".grading.env")
+        self.database = Database()
         self.cursor = self.database.get_cursor()
         self.database.get_connection().ping(reconnect=False)
         self.database.up()
@@ -293,7 +293,7 @@ class Grader:
                 total_student_marks += student_marks
                 total_test_marks += test_marks
 
-                print(f"    Nom du test:{test_name}")
+                print(f"    Nom du test: {test_name}")
                 print(f"    Points: {student_marks} / {test_marks}")
                 print("    ---")
         print(f"Total de points: {total_student_marks} / {total_test_marks}")
