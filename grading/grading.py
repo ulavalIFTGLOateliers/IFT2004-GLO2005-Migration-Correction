@@ -1,9 +1,10 @@
+import sys
 from collections import OrderedDict
 
 from database import Database
+
 from grading_utils import failable, load_db_states_from_json
 
-import sys
 
 class Grader:
     def __init__(self):
