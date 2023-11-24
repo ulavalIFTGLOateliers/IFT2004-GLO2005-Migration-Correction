@@ -1,8 +1,8 @@
+import os
 import sys
 from collections import OrderedDict
 
 from database import Database
-
 from grading_utils import failable, load_db_states_from_json
 
 
@@ -13,6 +13,7 @@ class Grader:
 
             Il est possible d'ajouter autant de tests que désiré, ainsi que modifier les tests existants
             Tous les tests doivent être ajoutés au dictionnaire self.grading_template, dans la section correspondante parmis:
+                - prereq
                 - up
                 - after_migration_1
                 - after_rollback_1
@@ -31,6 +32,13 @@ class Grader:
         """
 
         self.grading_template = OrderedDict({
+            "prereq": {
+                "idul": {
+                    "callable": self._idul,
+                    "points": 1,
+                    "passed": False
+                }
+            },
             "up": {
                 "connexion": {
                     "callable": self._up,
@@ -141,9 +149,14 @@ class Grader:
     def run(self):
         """
         Logique de correction.
-        Roule les tests dans l'ordre d'exécution classique.
+        Roules les tests dans l'ordre d'exécution classique.
         Ne devrait pas être modifié, sauf si d'autres étapes s'ajoutent
         """
+
+        self._run_section_tests("prereq")
+        if not self.grading_template["prereq"]["idul"]["passed"]:
+            return
+
         self._run_section_tests("up")
         if not self.grading_template["up"]["connexion"]["passed"]:
             return
@@ -171,6 +184,10 @@ class Grader:
             return
 
         self._run_section_tests("after_rollback_2")
+
+    @failable
+    def _idul(self):
+        return os.stat("idul.txt").st_size > 0
 
     @failable
     def _up(self):
@@ -295,10 +312,9 @@ class Grader:
                 total_student_marks += student_marks
                 total_test_marks += test_marks
 
-                print(f"    Nom du test: {test_name}")
+                print(f"    Nom du test:{test_name}")
                 print(f"    Points: {student_marks} / {test_marks}")
                 print("    ---")
-
         print(f"Total de points: {total_student_marks} / {total_test_marks}")
 
         if total_student_marks < total_test_marks:
