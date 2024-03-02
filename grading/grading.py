@@ -326,6 +326,8 @@ class Grader:
 if __name__ == '__main__':
     grader = Grader()
 
+    print("GRADER V2.0")
+
     grader.run()
 
     grader.generate_report()
